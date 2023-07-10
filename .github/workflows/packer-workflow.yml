@@ -10,12 +10,12 @@ env:
   HCP_PROJECT_ID: ${{ secrets.HCP_PROJECT_ID }}
   HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
   HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
-  PKR_VAR_client_id: ${{ secrets.PKR_VAR_CLIENT_ID }}
-  PKR_VAR_subscription_id: ${{ secrets.PKR_VAR_SUBSCRIPTION_ID }}
-  PKR_VAR_client_secret: ${{ secrets.PKR_VAR_CLIENT_SECRET }}
-  ARM_CLIENT_ID: ${{ secrets.PKR_VAR_CLIENT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.PKR_VAR_SUBSCRIPTION_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.PKR_VAR_CLIENT_SECRET }}
+  PKR_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+  PKR_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  PKR_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   TF_VAR_admin_username: ${{ secrets.TF_VAR_ADMIN_USERNAME }}
   TF_VAR_admin_password: ${{ secrets.TF_VAR_ADMIN_PASSWORD }}
@@ -73,7 +73,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: troyfluegge/aws-myapp
+          repository: cube-earth-labs/aws-myapp
           path: aws-myapp
 
       - name: Configure AWS Credentials
@@ -96,7 +96,7 @@ jobs:
         id: tf_apply
         working-directory: ./aws-myapp
         run: |
-          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
           echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
@@ -106,7 +106,7 @@ jobs:
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
         working-directory: ./aws-myapp
-        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   test-azure:
     name: Azure E2E Testing
@@ -121,7 +121,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: troyfluegge/azure-myapp
+          repository: cube-earth-labs/azure-myapp
           path: azure-myapp
 
       - name: Setup Terraform
@@ -137,7 +137,7 @@ jobs:
         id: tf_apply
         working-directory: ./azure-myapp
         run: |
-          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
           echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
@@ -147,7 +147,7 @@ jobs:
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
         working-directory: ./azure-myapp
-        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   promote-dev-staging:
     name: Promote to Dev and Staging Channels
@@ -159,11 +159,11 @@ jobs:
 
       - name: Promote Iteration to Dev
         working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "development" "${{ needs.build.outputs.iteration_id }}"
+        run: ./set_iteration.sh "cube-ubuntu-myapp" "development" "${{ needs.build.outputs.iteration_id }}"
 
       - name: Promote Iteration to Staging
         working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "staging" "${{ needs.build.outputs.iteration_id }}"
+        run: ./set_iteration.sh "cube-ubuntu-myapp" "staging" "${{ needs.build.outputs.iteration_id }}"
 
   promote-prod:
     name: Promote to Production
@@ -176,4 +176,4 @@ jobs:
 
       - name: Promote Iteration to Prod
         working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "production" "${{ needs.build.outputs.iteration_id }}"
+        run: ./set_iteration.sh "cube-ubuntu-myapp" "production" "${{ needs.build.outputs.iteration_id }}"

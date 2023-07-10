@@ -1,0 +1,4 @@
+prefix         = "ericreeves_demo" # must contain only lowercase alphanumeric characters, numbers and underscores
+location       = "eastus"
+env            = "dev"
+department     = "PlatformEng"

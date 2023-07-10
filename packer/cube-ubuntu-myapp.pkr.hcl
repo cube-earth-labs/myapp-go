@@ -12,23 +12,23 @@ packer {
   }
 }
 
-data "hcp-packer-iteration" "base-ubuntu" {
-  bucket_name = "hcp-ubuntu-base"
+data "hcp-packer-iteration" "cube-ubuntu-base" {
+  bucket_name = "cube-ubuntu-base"
   channel = "production"
 }
 
 data "hcp-packer-image" "aws" {
-  bucket_name = data.hcp-packer-iteration.base-ubuntu.bucket_name
-  iteration_id = data.hcp-packer-iteration.base-ubuntu.id
+  bucket_name = data.hcp-packer-iteration.cube-ubuntu-base.bucket_name
+  iteration_id = data.hcp-packer-iteration.cube-ubuntu-base.id
   cloud_provider = "aws"
   region = "us-east-1"
 }
 
 data "hcp-packer-image" "azure" {
-  bucket_name = data.hcp-packer-iteration.base-ubuntu.bucket_name
-  iteration_id = data.hcp-packer-iteration.base-ubuntu.id
+  bucket_name = data.hcp-packer-iteration.cube-ubuntu-base.bucket_name
+  iteration_id = data.hcp-packer-iteration.cube-ubuntu-base.id
   cloud_provider = "azure"
-  region = "East US"
+  region = "eastus"
 }
 
 source "amazon-ebs" "myapp" {
@@ -42,8 +42,8 @@ source "amazon-ebs" "myapp" {
     SourceAMIName = "{{ .SourceAMIName }}"
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
-    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
-    SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
+    SourceImageChannel = data.hcp-packer-iteration.cube-ubuntu-base.channel_id
+    SourceImageIteration = data.hcp-packer-iteration.cube-ubuntu-base.id
   })
 }
 
@@ -61,14 +61,14 @@ source "azure-arm" "myapp" {
   
   # Destination Image
   managed_image_name                = "${var.image_name}_{{timestamp}}"
-  managed_image_resource_group_name = "${var.image_name}"
+  managed_image_resource_group_name = "${var.resource_group}"
   
   azure_tags = merge(var.default_base_tags, {
     SourceImageName = data.hcp-packer-image.azure.labels.managed_image_name
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
-    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
-    SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
+    SourceImageChannel = data.hcp-packer-iteration.cube-ubuntu-base.channel_id
+    SourceImageIteration = data.hcp-packer-iteration.cube-ubuntu-base.id
   })
 }
 

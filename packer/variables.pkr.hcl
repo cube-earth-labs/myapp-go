@@ -15,7 +15,11 @@ variable "client_secret" {
 
 variable "image_name" {
     type        = string
-    default     = "hcp-packer-myapp"
+    default     = "cube-ubuntu-myapp"
+}
+
+variable "resource_group" {
+    type        = string
 }
 
 variable "default_base_tags" {

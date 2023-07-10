@@ -1,0 +1,7 @@
+az_region = "eastus"
+az_resource_group = "ericreeves_demo_rg" # Must already exist
+az_image_gallery = "ericreeves_demo_sig"   # Must already exist
+az_subscription_id = 
+department = "PlatformEng"
+owner = "image.engineer"
+prefix = "ericreeves_demo"
