@@ -16,3 +16,6 @@ terraform.rc
 .terraformrc
 
 .DS_Store
+
+# Variable files
+packer.auto.pkrvars.hcl
