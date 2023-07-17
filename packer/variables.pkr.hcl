@@ -20,6 +20,7 @@ variable "image_name" {
 
 variable "resource_group" {
     type        = string
+    default     = "ericreeves_demo_rg"
 }
 
 variable "default_base_tags" {
