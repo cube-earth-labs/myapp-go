@@ -2,6 +2,11 @@
 resource "azurerm_resource_group" "demo" {
   name     = "${var.prefix}_rg"
   location = "${var.location}"
+
+  tags = {
+    Environment = "${var.env}"
+    Department = "${var.department}"
+  }
 }
 
 # Creates Shared Image Gallery
@@ -31,6 +36,11 @@ resource "azurerm_shared_image" "cube-ubuntu-base" {
     offer     = "cube_ubuntu_base"
     sku       = "${var.prefix}_cube_ubuntu_base"
   }
+
+  tags = {
+    Environment = "${var.env}"
+    Department = "${var.department}"
+  }
 }
 
 resource "azurerm_shared_image" "cube-ubuntu-myapp" {
@@ -45,5 +55,10 @@ resource "azurerm_shared_image" "cube-ubuntu-myapp" {
     publisher = "${var.prefix}"
     offer     = "cube_myapp"
     sku       = "${var.prefix}_cube_myapp"
+  }
+
+  tags = {
+    Environment = "${var.env}"
+    Department = "${var.department}"
   }
 }
