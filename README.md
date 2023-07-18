@@ -1,4 +1,4 @@
-# HashiCorp Solution Series - Part 1: Provision Infrastructure with HCP Packer
+# HashiCorp Solution Series
 
 ## Description
 This repository contains the code used for HasihCorp Solution Series - Part 1:  Provision Infrastructure with HCP Packer.
