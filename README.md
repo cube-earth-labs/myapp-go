@@ -1,7 +1,7 @@
-# HashiCorp Solution Series
+# Cube Earth Labs - Go Web Application
 
 ## Description
-This repository contains the code used for HasihCorp Solution Series - Part 1:  Provision Infrastructure with HCP Packer.
+This repository contains the Cube Earth Labs Go Web Application.
 
 ## Documentation
 
