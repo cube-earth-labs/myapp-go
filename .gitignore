@@ -19,3 +19,6 @@ terraform.rc
 
 # Variable files
 packer.auto.pkrvars.hcl
+
+# Binary
+bin/*
