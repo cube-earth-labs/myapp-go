@@ -83,12 +83,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./packer-myapp/e2e-test/aws
+        working-directory: ./packer/e2e-test/aws
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./packer-myapp/e2e-test/aws
+        working-directory: ./packer/e2e-test/aws
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -99,7 +99,7 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./packer-myapp/e2e-test/aws
+        working-directory: ./packer/e2e-test/aws
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   test-azure:
@@ -118,12 +118,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./packer-myapp/e2e-test/azure
+        working-directory: ./packer/e2e-test/azure
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./packer-myapp/e2e-test/azure
+        working-directory: ./packer/e2e-test/azure
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -134,7 +134,7 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./packer-myapp/e2e-test/azure
+        working-directory: ./packer/e2e-test/azure
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   promote-dev-staging:
