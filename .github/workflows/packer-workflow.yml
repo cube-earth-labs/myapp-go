@@ -70,12 +70,6 @@ jobs:
         with:
           path: packer-myapp
 
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          repository: cube-earth-labs/terraform-aws-myapp
-          path: terraform-aws-myapp
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
@@ -89,12 +83,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./terraform-aws-myapp
+        working-directory: ./packer-myapp/e2e-test/aws
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./terraform-aws-myapp
+        working-directory: ./packer-myapp/e2e-test/aws
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -105,7 +99,7 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./terraform-aws-myapp
+        working-directory: ./packer-myapp/e2e-test/aws
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   test-azure:
@@ -118,24 +112,18 @@ jobs:
         with:
           path: packer-myapp
 
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          repository: cube-earth-labs/terraform-azure-myapp
-          path: terraform-azure-myapp
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./terraform-azure-myapp
+        working-directory: ./packer-myapp/e2e-test/azure
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./terraform-azure-myapp
+        working-directory: ./packer-myapp/e2e-test/azure
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -146,7 +134,7 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./terraform-azure-myapp
+        working-directory: ./packer-myapp/e2e-test/azure
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   promote-dev-staging:
