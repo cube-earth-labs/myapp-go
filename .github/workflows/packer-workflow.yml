@@ -65,10 +65,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: packer-myapp
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: cube-earth-labs/myapp-go
+      #     path: myapp-go
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
@@ -83,23 +84,23 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./packer/e2e-test/aws
+        working-directory: packer/e2e-test/aws
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./packer/e2e-test/aws
+        working-directory: packer/e2e-test/aws
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
           echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
-        working-directory: ./packer-myapp/.github/scripts
+        working-directory: .github/scripts
         run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./packer/e2e-test/aws
+        working-directory: packer/e2e-test/aws
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   test-azure:
@@ -107,10 +108,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: packer-myapp
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     path: packer-myapp
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -118,23 +119,23 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./packer/e2e-test/azure
+        working-directory: packer/e2e-test/azure
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./packer/e2e-test/azure
+        working-directory: packer/e2e-test/azure
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
           health_endpoint="$(terraform output -raw health_endpoint)"
           echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
-        working-directory: ./packer-myapp/.github/scripts
+        working-directory: .github/scripts
         run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./packer/e2e-test/azure
+        working-directory: packer/e2e-test/azure
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test-cube"
 
   promote-dev-staging:
